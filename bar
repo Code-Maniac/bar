@@ -1,0 +1,35 @@
+#!/bin/bash
+
+if ! git status &> /dev/null
+then
+    echo "Must be in a git repository"
+    exit 1
+fi
+
+ROOT=$(git rev-parse --show-toplevel)
+
+cd ${ROOT}
+
+# now detect what the build system is
+if [ -f CMakeLists.txt ]; then
+    # need to work out what the executable is
+    mkdir -p build && cd build
+    cmake ..
+    make -j12
+elif [ -f Makefile ]; then
+    # need to work out what the executable is
+    make -j12
+else
+    echo "Unknown or non-standard build system"
+    exit 1
+fi
+
+for f in *; do
+    # check for executable file and run that
+    if [ -x ${f} ]; then
+        ${f}
+        exit 0
+    fi
+done
+
+echo "No executable found in $(pwd)"

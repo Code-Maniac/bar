@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cp ./bar /usr/local/bin/bar
+chmod 755 /usr/local/bin/bar
