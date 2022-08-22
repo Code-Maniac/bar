@@ -19,6 +19,9 @@ if [ -f CMakeLists.txt ]; then
 elif [ -f Makefile ]; then
     # need to work out what the executable is
     make -j12
+elif [ -f ./src/*/__main__.py ]; then
+    python $(find . -type f -name "__main__.py")
+    exit 0
 else
     echo "Unknown or non-standard build system"
     exit 1
