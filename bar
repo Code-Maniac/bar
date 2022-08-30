@@ -20,8 +20,37 @@ elif [ -f Makefile ]; then
     # need to work out what the executable is
     make -j12
 elif [ -f ./src/*/__main__.py ]; then
-    python $(find . -type f -name "__main__.py")
-    exit 0
+    # here we need to work out what python executables that we have
+    # check for python, python2, python3
+    # work out which one is python3
+    PYTHONVERSIONMAJOR=0
+
+    if hash python &> /dev/null; then
+        PYTHONVERSIONMAJOR=$(($(python --version 2>&1 | awk '{print $2}' | awk -F'.' '{print $1}')))
+        PYTHONBIN=python
+    fi
+
+    if [ ${PYTHONVERSIONMAJOR} -lt 3 ]; then
+        if hash python3 &> /dev/null; then
+            PYTHONVERSIONMAJOR=3
+            PYTHONBIN=python3
+        fi
+    fi
+
+    if [ ${PYTHONVERSIONMAJOR} -lt 2 ]; then
+        if hash python2 &> /dev/null; then
+            PYTHONVERSIONMAJOR=2
+            PYTHONBIN=python2
+        fi
+    fi
+
+    if [ -z ${PYTHONBIN} ]; then
+        echo "No python found in path"
+        exit 1
+    else
+        ${PYTHONBIN} $(find . -type f -name "__main__.py")
+        exit 0
+    fi
 else
     echo "Unknown or non-standard build system"
     exit 1
