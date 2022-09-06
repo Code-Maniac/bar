@@ -58,9 +58,11 @@ fi
 
 for f in *; do
     # check for executable file and run that
-    if [ -x ${f} ]; then
-        ${f}
-        exit 0
+    if [ -f ${f} ]; then
+        if [ -x ${f} ]; then
+            ${f}
+            exit 0
+        fi
     fi
 done
 
