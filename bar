@@ -19,6 +19,10 @@ if [ -f CMakeLists.txt ]; then
 elif [ -f Makefile ]; then
     # need to work out what the executable is
     make -j12
+elif [ -f Cargo.toml ]; then
+    # we are within a cargo project so do cargo run
+    cargo run -- $@
+    exit 0
 elif [ -f ./src/*/__main__.py ]; then
     # here we need to work out what python executables that we have
     # check for python, python2, python3
@@ -48,7 +52,7 @@ elif [ -f ./src/*/__main__.py ]; then
         echo "No python found in path"
         exit 1
     else
-        ${PYTHONBIN} $(find . -type f -name "__main__.py")
+        ${PYTHONBIN} $(find . -type f -name "__main__.py") $@
         exit 0
     fi
 else
@@ -60,7 +64,7 @@ for f in *; do
     # check for executable file and run that
     if [ -f ${f} ]; then
         if [ -x ${f} ]; then
-            ${f}
+            ${f} $@
             exit 0
         fi
     fi
